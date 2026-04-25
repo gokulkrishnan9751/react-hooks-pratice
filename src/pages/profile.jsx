@@ -1,42 +1,36 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Card from "../component/card";
-import { FavouriteContext } from "../context/favouriteProveider";
 import Nav from "../component/nav";
+import { useFavourites } from "../hooks/useProfile";
+import { useFavouriteContext } from "../context/favouriteProveider";
 
 function Profile() {
   const user = JSON.parse(sessionStorage.getItem("profile"));
-  const { favourite, setFavourite } = useContext(FavouriteContext);
-  const [favouriteList, setFavouriteList] = useState([]);
+
+  const { favourite, setFavourite } = useFavouriteContext();
+  const { favouriteList, loading, fetchFavourites } = useFavourites();
 
   useEffect(() => {
     const fav = JSON.parse(sessionStorage.getItem("favourite") || "[]");
-
     if (fav) {
       setFavourite(fav);
     }
-  }, []);
-
-  const fetchFav = useCallback(async () => {
-    try {
-      const responses = await Promise.all(
-        favourite.map((id) =>
-          fetch(`https://api.github.com/search/users?q=${id}`).then((res) =>
-            res.json(),
-          ),
-        ),
-      );
-
-      const firstUsers = responses.map((res) => res.items[0]);
-
-      setFavouriteList(firstUsers);
-    } catch (err) {
-      console.log(err);
-    }
-  }, [favourite]);
+  }, [setFavourite]);
 
   useEffect(() => {
-    fetchFav();
-  }, [fetchFav]);
+    fetchFavourites(favourite);
+  }, [favourite]);
+
+  if (!user) {
+    return (
+      <div className="profile-page">
+        <Nav />
+        <div className="profile-card">
+          <p className="profile-id">No profile data found. Please login first.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="profile-page">
@@ -62,7 +56,9 @@ function Profile() {
         </a>
       </div>
 
-      {favouriteList.length > 0 && (
+      {loading && <p>Loading favourites...</p>}
+
+      {favouriteList?.length > 0 && (
         <div className="fav-section">
           <h3 className="fav-title">Favourites</h3>
 

@@ -2,11 +2,12 @@ import React, { useState, useRef, useEffect } from "react";
 import Nav from "../component/nav";
 import Card from "../component/card";
 import AuthGuard from "../context/authGuard";
+import { useUser } from "../hooks/useLogin";
 
 function Home() {
   const [searchData, setSearchData] = useState([]);
+  const { loading, fetchUser } = useUser();
   const searchBar = useRef();
-  const [errMsg, setErrMsg] = useState()
 
   useEffect(() => {
     searchBar.current.focus();
@@ -14,19 +15,12 @@ function Home() {
 
   async function handleSearch() {
     const search = searchBar.current.value.trim();
-    try {
-      const res = await fetch(
-        `https://api.github.com/search/users?q=${search}`,
-      );
-      const data = await res.json();
-      setSearchData(data.items);
-    } catch (error) {
-      
-      console.log(error);
-    }
+    const data = await fetchUser(search);
+    setSearchData(data);
   }
+  
   return (
-<div className="page">
+    <div className="page">
       <Nav />
 
       <div className="search-container">
@@ -42,11 +36,8 @@ function Home() {
           }}
         />
 
-        <button
-          className="search-btn"
-          onClick={handleSearch}
-        >
-          Search
+        <button className="search-btn" onClick={handleSearch} disabled={loading}>
+          {loading ? "Searching..." : "Search"}
         </button>
       </div>
 
@@ -56,7 +47,6 @@ function Home() {
         ))}
       </div>
     </div>
-
   );
 }
 
