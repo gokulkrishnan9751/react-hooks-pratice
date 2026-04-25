@@ -3,6 +3,7 @@ import Card from "../component/card";
 import Nav from "../component/nav";
 import { useFavourites } from "../hooks/useProfile";
 import { useFavouriteContext } from "../context/favouriteProveider";
+import AuthGuard from "../context/authGuard";
 
 function Profile() {
   const user = JSON.parse(sessionStorage.getItem("profile"));
@@ -20,17 +21,6 @@ function Profile() {
   useEffect(() => {
     fetchFavourites(favourite);
   }, [favourite]);
-
-  if (!user) {
-    return (
-      <div className="profile-page">
-        <Nav />
-        <div className="profile-card">
-          <p className="profile-id">No profile data found. Please login first.</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="profile-page">

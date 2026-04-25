@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { createContext } from 'react'
+import { createContext, useContext } from 'react'
 
 export const FavouriteContext = createContext()
 export default function FavouriteProveider({children}) {
@@ -46,3 +46,7 @@ export default function FavouriteProveider({children}) {
     </FavouriteContext.Provider>
   )
 }
+
+export const useFavouriteContext = () => {
+  return useContext(FavouriteContext);
+};
