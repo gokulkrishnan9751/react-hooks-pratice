@@ -117,7 +117,6 @@ body{
     position: fixed;
     top: 20px;
     right: 20px;
-    background-color: #238636;
     color: white;
     padding: 10px 20px;
     border-radius: 8px;
@@ -129,7 +128,8 @@ body{
 }
 
 .error{
-  color: red;
+  color: white;
+  background-color: red;
 }
 
 .loading{
